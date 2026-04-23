@@ -387,6 +387,14 @@ trait fields_trait {
             return new condition_sql('', '', []);
         }
 
+        // Profile field data is stored as VARCHAR in mdl_user_info_data.data.
+        // Without an explicit CAST, MySQL compares the stored string against the
+        // integer param using lexicographic ordering, which produces incorrect
+        // results for timestamps of differing digit lengths (e.g. a 9-digit
+        // pre-2001 timestamp starting with '9' sorts after any 10-digit timestamp
+        // starting with '1'). CAST(... AS UNSIGNED) forces a numeric comparison.
+        $cast = "CAST($tablealias.$fieldname AS UNSIGNED)";
+
         $param = condition_sql::generate_param_alias();
         switch ($operatorvalue) {
             case self::TEXT_IS_EMPTY:
@@ -394,16 +402,16 @@ trait fields_trait {
                 $params[$param] = 0;
                 break;
             case self::TEXT_IS_NOT_EMPTY:
-                $where = "$tablealias.$fieldname <> :$param";
+                $where = "$cast <> :$param";
                 $params[$param] = (int) $fieldvalue;
                 break;
             case self::DATE_IS_BEFORE:
-                $where = "$tablealias.$fieldname <= :$param";
+                $where = "$cast <= :$param";
                 $params[$param] = (int) $fieldvalue;
                 break;
             case self::DATE_IS_AFTER:
-                $where = "$tablealias.$fieldname >= :$param";
-                $params[$param] = (int)  $fieldvalue;
+                $where = "$cast >= :$param";
+                $params[$param] = (int) $fieldvalue;
                 break;
             default:
                 return new condition_sql('', '', []);
