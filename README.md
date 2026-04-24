@@ -4,6 +4,10 @@
 
 # Dynamic cohorts #
 
+## NOTE ##
+
+This is copied from the Dyanmic Cohorts plugin in the Moodle Plugin Repository. This provides a patch for the Moodle 4.1/4.2/4.3 plugin version where any date compairson rules would not evaluate pre-2001 dates properly. This issue has been patched in the official Dynamic Cohorts release for Moodle 4.4 and onwards.
+
 Dynamic cohorts plugin allows dynamically add and remove users from cohorts based on configured rules, which themselves are composed of conditions.
 
 # Versions and branches
